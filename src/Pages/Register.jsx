@@ -1,14 +1,63 @@
-import React, { useState } from "react";
-import { Link } from "react-router";
-import { Toaster } from "react-hot-toast";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { AuthContext } from "../AuthProvider/AuthProvider";
 
 const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const { createUser, setUser, signInWithGoogle } = useContext(AuthContext);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const name = form.name.value;
+        const email = form.email.value;
+        const password = form.password.value;
+        const photo_url = form.photo_url.value;
+          
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long");
+            return;
+        }
+        if (!/[A-Z]/.test(password)) {
+            setError("Password must contain at least one uppercase letter");
+            return;
+        }
+        if (!/[a-z]/.test(password)) {
+            setError("Password must contain at least one lowercase letter");
+            return;
+        }
+
+        setError("");
+
+        createUser(email, password)
+            .then(result => {
+                console.log(result.user)
+                setUser(result.user)
+                toast.success("Register Successfully")
+                navigate('/')
+            })
+            .catch(err => {
+            setError(err.message)
+            })
+        
+        
+    }
+    const handleGoogleSignIn = () => {
+        signInWithGoogle()
+            .then((res) => {
+                setUser(res.user);
+                toast.success("Signed in with Google!");
+                navigate("/");
+            })
+            .catch((err) => toast.error(err.message));
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-200 via-orange-50 to-orange-100 px-5">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-r from-orange-200 via-orange-50 to-orange-100 px-5">
 
             <Toaster position="top-right" />
 
@@ -16,8 +65,8 @@ const Register = () => {
                 <h1 className="text-3xl font-bold text-center mb-6">
                     Create an Account
                 </h1>
-
-                <form className="space-y-4 text-black">
+                {error && <p className="mb-4 text-red-500 text-center text-sm">{error}</p>}
+                <form onSubmit={handleSubmit} className="space-y-4 text-black">
 
                     {/* Name */}
                     <input
@@ -76,7 +125,8 @@ const Register = () => {
 
                 {/* Google Login */}
                 <div className="flex items-center justify-center mt-4 gap-2">
-                    <button
+                    <button 
+                        onClick={handleGoogleSignIn}
                         className="flex items-center gap-2 border border-gray-300 p-2 rounded-lg hover:bg-gray-100 w-full justify-center text-black"
                     >
                         <FcGoogle size={24} /> <p>Continue with Google</p>
