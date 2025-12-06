@@ -59,7 +59,7 @@ const MyRequest = () => {
                                     className="hover:bg-[#fff2e6] transition-colors duration-200"
                                 >
                                     <td className="font-medium">{r.foodName}</td>
-                                    <td>{r.owner_email}</td>
+                                    <td>{user.email}</td>
                                     <td>{r.location}</td>
                                     <td>{r.reason}</td>
                                     <td

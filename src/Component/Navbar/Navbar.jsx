@@ -78,14 +78,12 @@ const Navbar = () => {
                             <li>
                                 {user ? (
                                     <>
-                                        <NavLink to="/profile">
-                                            <button className=" bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">Profile</button>
-                                        </NavLink>
+                                       
                                         <NavLink to="/managefood">
-                                            <a className=" bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">Manage My Food</a>
+                                            Manage My Food
                                         </NavLink>
                                         <NavLink to="/owner-requests">
-                                            <a className=" bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">Add Food</a>
+                                            Add Food
                                         </NavLink>
                                         <button
                                             onClick={handleLogout}
@@ -142,26 +140,25 @@ const Navbar = () => {
                         >
                             <li className="font-bold text-center text-[#ba692b]">{user.displayName || "User"}</li>
                             <li>
-                                <NavLink to="/profile">Profile</NavLink>
-                            </li>
-                            <NavLink to="/managefood">
-                                Manage My Food
-                            </NavLink>
-                            <NavLink to="/addfoods">
-                                Add Food
-                            </NavLink>
-                            <NavLink to="/owner-requests">
-                               Requested Food
-                            </NavLink>
-                            <NavLink to="/food-request">
-                                Food req
-                            </NavLink>
-                            <NavLink to="/myrequest">
-                                my req
-                            </NavLink>
-                            <NavLink to="/food-request/:ownerEmail">
+                                <NavLink to="/managefood">
+                                    Manage My Food
+                                </NavLink>  
+                         </li>
+                            
+                            <li>
+                                <NavLink to="/addfoods">
+                                    Add Food
+                                </NavLink>
+                           </li>
+                            <li>
+                                <NavLink to="/owner-requests">
+                                    Requested Food
+                                </NavLink>
+                           </li>
+                          
+                            <li> <NavLink to="/food-request/:ownerEmail">
                                 Food req owner Email
-                            </NavLink>
+                            </NavLink></li>
                             <li>
                                 <button
                                     onClick={handleLogout}

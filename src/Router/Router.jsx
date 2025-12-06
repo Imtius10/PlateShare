@@ -12,6 +12,7 @@ import MyRequest from "../Pages/AllFoods/MyRequest";
 import FoodOwnerRequestPanel from "../Pages/AllFoods/FoodOwnerRequestPanel";
 import OwnerRequests from "../Pages/AllFoods/OwnerRequests";
 import UpdateFood from "../Pages/AllFoods/UpdateFood";
+import PrivateRoutes from "../Private/PrivateRoutes";
 
 
 
@@ -38,14 +39,18 @@ const router = createBrowserRouter([
             },
             {
                 path: '/foods/:id',
-                element: <FoodDetails />
+                element: <PrivateRoutes>
+                    <FoodDetails />
+                </PrivateRoutes>
             }, {
                 path: '/managefood',
                 element: <ManageMyFoods></ManageMyFoods>
             },
             {
                 path: '/addfoods',
-                element:<AddFoods></AddFoods>
+                element: <PrivateRoutes>
+                    <AddFoods></AddFoods>
+                </PrivateRoutes>
             },
             {
                 path: "/food-request/:ownerEmail",
