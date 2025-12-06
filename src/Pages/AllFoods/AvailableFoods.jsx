@@ -49,7 +49,7 @@ const AvailableFoods = () => {
                     >
                         <div className="h-56 overflow-hidden rounded-t-2xl">
                             <img
-                                src={food.food_image || "https://via.placeholder.com/400x300?text=No+Image"}
+                                src={food.food_image}
                                 alt={food.food_name}
                                 className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
                             />
@@ -62,7 +62,7 @@ const AvailableFoods = () => {
 
                             <div className="flex items-center gap-3 mb-3">
                                 <img
-                                    src={food.donator_image || "https://via.placeholder.com/40x40?text=No+Photo"}
+                                    src={food.donator_image || ""}
                                     alt="donator"
                                     className="w-10 h-10 rounded-full border-2"
                                     style={{ borderColor: "#ba692b" }}
