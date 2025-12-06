@@ -16,12 +16,13 @@ const FoodDetails = () => {
         contact_no: "",
     });
 
+    // Fetch food details
     useEffect(() => {
         fetch(`http://localhost:3000/foods/${id}`)
             .then(res => res.json())
             .then(data => setFood(data))
             .catch(err => {
-                console.log(err);
+                console.error(err);
                 toast.error("Failed to fetch food details");
             })
             .finally(() => setLoading(false));
@@ -52,7 +53,7 @@ const FoodDetails = () => {
         };
 
         try {
-            const res = await fetch("http://localhost:3000/requests", {
+            const res = await fetch("http://localhost:3000/food-requests", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -62,6 +63,8 @@ const FoodDetails = () => {
                 toast.success("Food request submitted!");
                 setShowModal(false);
                 setRequestData({ location: "", reason: "", contact_no: "" });
+            } else {
+                toast.error("Failed to submit request");
             }
         } catch (err) {
             console.error(err);

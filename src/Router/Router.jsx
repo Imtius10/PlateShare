@@ -11,6 +11,7 @@ import FoodRequest from "../Pages/AllFoods/FoodRequest";
 import MyRequest from "../Pages/AllFoods/MyRequest";
 import FoodOwnerRequestPanel from "../Pages/AllFoods/FoodOwnerRequestPanel";
 import OwnerRequests from "../Pages/AllFoods/OwnerRequests";
+import UpdateFood from "../Pages/AllFoods/UpdateFood";
 
 
 
@@ -62,8 +63,11 @@ const router = createBrowserRouter([
             {
                 path:"/owner-requests",
                 element:< OwnerRequests />
+            },
+            {
+                path: "/update-food/:id",
+                element:<UpdateFood></UpdateFood>
             }
-            
         ]
     },
     

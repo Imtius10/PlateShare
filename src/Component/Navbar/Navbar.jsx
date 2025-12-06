@@ -145,10 +145,22 @@ const Navbar = () => {
                                 <NavLink to="/profile">Profile</NavLink>
                             </li>
                             <NavLink to="/managefood">
-                                <a className=" bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">Manage My Food</a>
+                                Manage My Food
                             </NavLink>
                             <NavLink to="/addfoods">
-                                <a className="bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">Add Food</a>
+                                Add Food
+                            </NavLink>
+                            <NavLink to="/owner-requests">
+                               Requested Food
+                            </NavLink>
+                            <NavLink to="/food-request">
+                                Food req
+                            </NavLink>
+                            <NavLink to="/myrequest">
+                                my req
+                            </NavLink>
+                            <NavLink to="/food-request/:ownerEmail">
+                                Food req owner Email
                             </NavLink>
                             <li>
                                 <button

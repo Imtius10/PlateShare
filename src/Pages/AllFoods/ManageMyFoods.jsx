@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const ManageMyFoods = () => {
     const { user } = useContext(AuthContext);
@@ -18,24 +19,33 @@ const ManageMyFoods = () => {
     }, [user]);
 
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this food?");
-        if (!confirmDelete) return;
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ba692b",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
 
-        try {
-            const res = await fetch(`http://localhost:3000/foods/${id}`, {
-                method: "DELETE",
-            });
-            const data = await res.json();
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`http://localhost:3000/foods/${id}`, {
+                    method: "DELETE",
+                });
+                const data = await res.json();
 
-            if (data.deletedCount > 0) {
-                toast.success("Food deleted successfully!");
-                setMyFoods(prev => prev.filter(food => food._id !== id));
-            } else {
-                toast.error("Failed to delete food.");
+                if (data.deletedCount > 0) {
+                    toast.success("Food deleted successfully!");
+                    setMyFoods(prev => prev.filter(food => food._id !== id));
+                } else {
+                    toast.error("Failed to delete food.");
+                }
+            } catch (err) {
+                console.error(err);
+                toast.error("Error deleting food.");
             }
-        } catch (err) {
-            console.error(err);
-            toast.error("Error deleting food.");
         }
     };
 
