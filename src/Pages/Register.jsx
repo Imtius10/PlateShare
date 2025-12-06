@@ -11,6 +11,18 @@ const Register = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
+    // Save user in your database
+    const saveUserToDB = (user) => {
+        fetch("http://localhost:3000/user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user),
+        })
+            .then(res => res.json())
+            .then(() => console.log("User saved to DB"))
+            .catch(err => console.log(err));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
@@ -39,6 +51,15 @@ const Register = () => {
             .then((result) => {
                 setUser(result.user);
                 toast.success("Registered Successfully!");
+
+                // Save user in DB
+                saveUserToDB({
+                    name,
+                    email,
+                    photo_url,
+                    createdAt: new Date(),
+                });
+
                 navigate("/");
             })
             .catch((err) => setError(err.message));
@@ -49,6 +70,15 @@ const Register = () => {
             .then((res) => {
                 setUser(res.user);
                 toast.success("Signed in with Google!");
+
+                // Save Google user in DB
+                saveUserToDB({
+                    name: res.user.displayName,
+                    email: res.user.email,
+                    photo_url: res.user.photoURL || "",
+                    createdAt: new Date(),
+                });
+
                 navigate("/");
             })
             .catch((err) => toast.error(err.message));
@@ -57,7 +87,6 @@ const Register = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#f7efe7] px-4">
             <Toaster position="top-right" />
-
             <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-[#ba692b]">
                 <h1 className="text-3xl font-bold text-center mb-6 text-[#ba692b]">
                     Create an Account

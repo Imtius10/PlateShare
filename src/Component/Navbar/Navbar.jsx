@@ -79,12 +79,20 @@ const Navbar = () => {
                                 {user ? (
                                     <>
                                        
-                                        <NavLink to="/managefood">
-                                            Manage My Food
-                                        </NavLink>
-                                        <NavLink to="/owner-requests">
-                                            Add Food
-                                        </NavLink>
+                                        <li>
+                                            <NavLink to="/addfoods">
+                                                Add Food
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/owner-requests">
+                                                Requested Food
+                                            </NavLink>
+                                        </li>
+
+                                        <li> <NavLink to="/food-request/:ownerEmail">
+                                            Food req owner Email
+                                        </NavLink></li>
                                         <button
                                             onClick={handleLogout}
                                             className="btn bg-[#ba692b] text-white w-full hover:bg-[#d88a55]"
