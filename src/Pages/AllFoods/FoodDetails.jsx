@@ -11,7 +11,7 @@ const FoodDetails = () => {
 
     const [food, setFood] = useState(null);
 
-    // Redirect if not logged in
+   
     useEffect(() => {
         if (!user) {
             toast.error("You need to login first!");
