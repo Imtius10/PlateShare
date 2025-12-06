@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-
 import toast from "react-hot-toast";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
+import RequestFood from "./MyRequest"; // import the request food component
 
 const FoodDetails = () => {
     const { id } = useParams();
@@ -11,7 +11,7 @@ const FoodDetails = () => {
 
     const [food, setFood] = useState(null);
 
-   
+    // Redirect if not logged in
     useEffect(() => {
         if (!user) {
             toast.error("You need to login first!");
@@ -19,13 +19,12 @@ const FoodDetails = () => {
         }
     }, [user, navigate]);
 
+    // Fetch food details
     useEffect(() => {
         const fetchFood = async () => {
             try {
                 const res = await fetch(`http://localhost:3000/foods/${id}`);
-                if (!res.ok) {
-                    throw new Error("Food not found");
-                }
+                if (!res.ok) throw new Error("Food not found");
                 const data = await res.json();
                 setFood(data);
             } catch (err) {
@@ -36,7 +35,6 @@ const FoodDetails = () => {
         fetchFood();
     }, [id]);
 
-
     if (!food) {
         return (
             <div className="flex justify-center mt-10 text-xl font-semibold">
@@ -44,10 +42,6 @@ const FoodDetails = () => {
             </div>
         );
     }
-
-    const handleRequestFood = () => {
-        toast.success("Request Food action will be added later!");
-    };
 
     return (
         <div className="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-xl">
@@ -82,11 +76,14 @@ const FoodDetails = () => {
                     <b>Pickup Location:</b> {food.pickup_location}
                 </p>
                 <p>
-                    <b>Expire Date:</b> {food.expire_date}
+                    <b>Expire Date:</b> {new Date(food.expire_date).toLocaleDateString()}
                 </p>
                 <p>
                     <b>Status:</b>{" "}
-                    <span className="text-green-600 font-semibold">
+                    <span
+                        className={`font-semibold ${food.food_status === "Available" ? "text-green-600" : "text-red-600"
+                            }`}
+                    >
                         {food.food_status}
                     </span>
                 </p>
@@ -100,13 +97,16 @@ const FoodDetails = () => {
                 </p>
             </div>
 
-            {/* Request Food Button */}
-            <button
-                onClick={handleRequestFood}
-                className="btn btn-success w-full mt-6"
-            >
-                Request Food
-            </button>
+            {/* Request Food Component */}
+            {user?.email !== food.donator_email && food.food_status === "Available" && (
+                <div className="mt-6">
+                    <RequestFood
+                        foodId={food._id}
+                        foodName={food.food_name}
+                        onRequestSubmitted={() => toast.success("Request submitted!")}
+                    />
+                </div>
+            )}
         </div>
     );
 };

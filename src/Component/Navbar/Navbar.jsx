@@ -42,7 +42,7 @@ const Navbar = () => {
                             ? "underline text-[#75d705] font-semibold text-lg"
                             : "font-semibold text-lg"
                     }
-                    to="/my-requests"
+                    to="/food-request"
                 >
                     My Requests
                 </NavLink>
@@ -84,7 +84,9 @@ const Navbar = () => {
                                         <NavLink to="/managefood">
                                             <button className="btn btn-success w-full">Manage My Food</button>
                                         </NavLink>
-
+                                        <NavLink to="/addfoods">
+                                            <button className="btn btn-success w-full">Add Food</button>
+                                        </NavLink>
                                         <button
                                             onClick={handleLogout}
                                             className="btn btn-error w-full mt-2"
@@ -142,6 +144,9 @@ const Navbar = () => {
                             </li>
                             <NavLink to="/managefood">
                                 <button className="btn btn-success w-full">Manage My Food</button>
+                            </NavLink>
+                            <NavLink to="/addfoods">
+                                <button className="btn btn-success w-full">Add Food</button>
                             </NavLink>
                             <li>
                                 <button
