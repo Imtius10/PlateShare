@@ -1,15 +1,12 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-
-import toast, { Toaster } from "react-hot-toast";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
+import toast, { Toaster } from "react-hot-toast";
 
 const AddFoods = () => {
-    const { user } = useContext(AuthContext)
+    const { user } = useContext(AuthContext);
     const { register, handleSubmit, reset } = useForm();
     const [loading, setLoading] = useState(false);
-
-    const imgbbKey = "YOUR_IMGBB_API_KEY"; // <-- replace
 
     const onSubmit = async (data) => {
         if (!user) {
@@ -20,28 +17,12 @@ const AddFoods = () => {
         setLoading(true);
 
         try {
-            // 1️⃣ Upload image to imgbb
-            const formData = new FormData();
-            formData.append("image", data.foodImage[0]);
+            // Optional image handling
+            const imageUrl =
+                data.foodImage && data.foodImage.length > 0
+                    ? "IMAGE_LINK_WILL_BE_ADDED_LATER" // placeholder
+                    : "";
 
-            const imgUpload = await fetch(
-                `https://api.imgbb.com/1/upload?key=${imgbbKey}`,
-                {
-                    method: "POST",
-                    body: formData,
-                }
-            );
-            const imgRes = await imgUpload.json();
-
-            if (!imgRes.success) {
-                toast.error("Image upload failed");
-                setLoading(false);
-                return;
-            }
-
-            const imageUrl = imgRes.data.url;
-
-            // 2️⃣ Build final food data
             const foodInfo = {
                 food_name: data.foodName,
                 food_image: imageUrl,
@@ -53,14 +34,12 @@ const AddFoods = () => {
                 // Auto-filled donor info
                 donator_name: user.displayName,
                 donator_email: user.email,
-                donator_image: user.photoURL,
+                donator_image: user.photoURL || "",
 
-                food_status: "Available", // default
-
+                food_status: "Available",
                 createdAt: new Date(),
             };
 
-            // 3️⃣ Send to MongoDB backend
             const res = await fetch("http://localhost:5000/foods", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -100,13 +79,13 @@ const AddFoods = () => {
                     />
                 </div>
 
-                {/* Image Upload */}
+                {/* Image Upload (optional) */}
                 <div>
-                    <label className="font-medium">Food Image</label>
+                    <label className="font-medium">Food Image (Optional)</label>
                     <input
                         type="file"
                         className="file-input file-input-bordered w-full"
-                        {...register("foodImage", { required: true })}
+                        {...register("foodImage")}
                         accept="image/*"
                     />
                 </div>
@@ -151,7 +130,7 @@ const AddFoods = () => {
                     ></textarea>
                 </div>
 
-                {/* Donor Info (auto-filled) */}
+                {/* Donor Info */}
                 <div className="bg-gray-100 p-3 rounded-lg">
                     <p><b>Donor Name:</b> {user?.displayName}</p>
                     <p><b>Email:</b> {user?.email}</p>
