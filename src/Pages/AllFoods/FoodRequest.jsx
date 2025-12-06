@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
+import { Commet } from "react-loading-indicators";
 
 const MyRequest = () => {
     const { user } = useContext(AuthContext);
@@ -23,13 +24,9 @@ const MyRequest = () => {
             </p>
         );
 
-    if (loading)
-        return (
-            <p className="text-center mt-10 text-[#ba692b] font-semibold">
-                Loading your requests...
-            </p>
-        );
-
+    if (loading) {
+        return <div className='flex justify-center items-center mx-auto min-h-full min-w-full'><Commet color={["#673a18", "#915221", "#ba692b", "#d48244"]} /></div>
+    }
     return (
         <div className="max-w-5xl mx-auto p-6 mt-10 bg-white shadow-xl rounded-2xl">
             <h2 className="text-3xl font-bold text-[#ba692b] mb-6 text-center">

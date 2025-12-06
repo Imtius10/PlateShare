@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import FoodRequestsTable from "./FoodRequestsTable";
 import toast, { Toaster } from "react-hot-toast";
+import { Commet } from "react-loading-indicators";
 
 const FoodDetails = () => {
     const { id } = useParams();
@@ -72,7 +73,9 @@ const FoodDetails = () => {
         }
     };
 
-    if (loading) return <p className="text-center mt-10">Loading food details...</p>;
+    if (loading) {
+        return <div className='flex justify-center items-center mx-auto min-h-full min-w-full'><Commet color={["#673a18", "#915221", "#ba692b", "#d48244"]} /></div>
+    }
     if (!food) return <p className="text-center mt-10">Food not found</p>;
 
     const isOwner = user?.email === food.donator_email;

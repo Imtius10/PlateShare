@@ -1,12 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
+import { Commet } from "react-loading-indicators";
 
 const MyRequest = () => {
     const { user } = useContext(AuthContext);
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
+    
+    
 
     useEffect(() => {
+       
+
         if (!user) return;
 
         fetch(`http://localhost:3000/my-requests?userEmail=${user.email}`)
@@ -14,10 +19,12 @@ const MyRequest = () => {
             .then(data => setRequests(data))
             .catch(err => console.log(err))
             .finally(() => setLoading(false));
-    }, [user]);
+    }, [user,loading]);
 
     if (!user) return <p className="text-center mt-10 text-lg font-semibold text-[#ba692b]">Please login to view your requests.</p>;
-    if (loading) return <p className="text-center mt-10 text-gray-600">Loading your requests...</p>;
+    if (loading) {
+        return <div className='flex justify-center items-center mx-auto min-h-full min-w-full'><Commet color={["#673a18", "#915221", "#ba692b", "#d48244"]} /></div>
+    }
 
     const statusColor = (status) => {
         if (status === "pending") return "text-yellow-600";

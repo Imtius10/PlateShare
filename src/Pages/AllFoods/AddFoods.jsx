@@ -1,12 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
 
 const AddFoods = () => {
     const { user } = useContext(AuthContext);
-    const { register, handleSubmit, reset } = useForm();
+    const { register, handleSubmit, reset, watch } = useForm();
     const [loading, setLoading] = useState(false);
+
+    const imageUrl = watch("foodImageUrl"); // live preview
 
     const onSubmit = async (data) => {
         if (!user) {
@@ -14,28 +16,24 @@ const AddFoods = () => {
             return;
         }
 
+        if (data.foodImageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(data.foodImageUrl)) {
+            toast.error("Please enter a valid image URL");
+            return;
+        }
+
         setLoading(true);
 
         try {
-            // Optional image handling
-            const imageUrl =
-                data.foodImage && data.foodImage.length > 0
-                    ? "IMAGE_LINK_WILL_BE_ADDED_LATER" // placeholder
-                    : "";
-
             const foodInfo = {
                 food_name: data.foodName,
-                food_image: imageUrl,
+                food_image: data.foodImageUrl || "",
                 food_quantity: data.foodQuantity,
                 pickup_location: data.pickupLocation,
                 expire_date: data.expireDate,
                 notes: data.notes || "",
-
-                // Auto-filled donor info
                 donator_name: user.displayName,
                 donator_email: user.email,
                 donator_image: user.photoURL || "",
-
                 food_status: "Available",
                 createdAt: new Date(),
             };
@@ -65,67 +63,75 @@ const AddFoods = () => {
     return (
         <div className="max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
             <Toaster />
-            <h2 className="text-2xl font-semibold mb-4 text-center">Add Food</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-center" style={{ color: "#ba692b" }}>
+                Add Food
+            </h2>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
                 {/* Food Name */}
                 <div>
-                    <label className="font-medium">Food Name</label>
+                    <label className="font-medium" style={{ color: "#ba692b" }}>Food Name</label>
                     <input
                         type="text"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full border-[#ba692b]"
                         {...register("foodName", { required: true })}
                     />
                 </div>
 
-                {/* Image Upload (optional) */}
+                {/* Image URL */}
                 <div>
-                    <label className="font-medium">Food Image (Optional)</label>
+                    <label className="font-medium" style={{ color: "#ba692b" }}>Food Image URL (Optional)</label>
                     <input
-                        type="file"
-                        className="file-input file-input-bordered w-full"
-                        {...register("foodImage")}
-                        accept="image/*"
+                        type="url"
+                        className="input input-bordered w-full border-[#ba692b]"
+                        {...register("foodImageUrl")}
+                        placeholder="https://example.com/food.jpg"
                     />
+                    {imageUrl && (
+                        <img
+                            src={imageUrl}
+                            alt="Preview"
+                            className="w-full h-48 object-cover rounded-lg mt-2 border-2 border-[#ba692b]"
+                        />
+                    )}
                 </div>
 
                 {/* Quantity */}
                 <div>
-                    <label className="font-medium">Food Quantity</label>
+                    <label className="font-medium" style={{ color: "#ba692b" }}>Food Quantity</label>
                     <input
                         type="text"
                         placeholder="Serves 2 people"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full border-[#ba692b]"
                         {...register("foodQuantity", { required: true })}
                     />
                 </div>
 
                 {/* Pickup Location */}
                 <div>
-                    <label className="font-medium">Pickup Location</label>
+                    <label className="font-medium" style={{ color: "#ba692b" }}>Pickup Location</label>
                     <input
                         type="text"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full border-[#ba692b]"
                         {...register("pickupLocation", { required: true })}
                     />
                 </div>
 
                 {/* Expire Date */}
                 <div>
-                    <label className="font-medium">Expire Date</label>
+                    <label className="font-medium" style={{ color: "#ba692b" }}>Expire Date</label>
                     <input
                         type="date"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full border-[#ba692b]"
                         {...register("expireDate", { required: true })}
                     />
                 </div>
 
                 {/* Additional Notes */}
                 <div>
-                    <label className="font-medium">Additional Notes</label>
+                    <label className="font-medium" style={{ color: "#ba692b" }}>Additional Notes</label>
                     <textarea
-                        className="textarea textarea-bordered w-full"
+                        className="textarea textarea-bordered w-full border-[#ba692b]"
                         {...register("notes")}
                     ></textarea>
                 </div>
@@ -138,7 +144,8 @@ const AddFoods = () => {
 
                 <button
                     type="submit"
-                    className="btn btn-success w-full mt-3"
+                    className="w-full mt-3 py-2 rounded-xl font-semibold text-white"
+                    style={{ backgroundColor: "#ba692b" }}
                     disabled={loading}
                 >
                     {loading ? "Adding..." : "Add Food"}

@@ -6,7 +6,7 @@ const OwnerRequests = () => {
     const { user } = useContext(AuthContext);
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
-
+   
     useEffect(() => {
         if (!user?.email) return;
 

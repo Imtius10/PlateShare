@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import FoodRequestsTable from "./FoodRequestsTable";
 import toast, { Toaster } from "react-hot-toast";
+import { Commet } from "react-loading-indicators";
 
 const FoodDetails = () => {
     const { id } = useParams();
@@ -11,6 +12,7 @@ const FoodDetails = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+       
         fetch(`http://localhost:3000/foods/${id}`)
             .then((res) => res.json())
             .then((data) => setFood(data))
@@ -19,10 +21,11 @@ const FoodDetails = () => {
                 toast.error("Failed to fetch food details");
             })
             .finally(() => setLoading(false));
-    }, [id]);
+    }, [id,loading]);
 
-    if (loading)
-        return <p className="text-center mt-10 text-[#ba692b] font-semibold">Loading food details...</p>;
+    if (loading) {
+        return <div className='flex justify-center items-center mx-auto min-h-full min-w-full'><Commet color={["#673a18", "#915221", "#ba692b", "#d48244"]} /></div>
+    }
     if (!food)
         return <p className="text-center mt-10 text-[#ba692b] font-semibold">Food not found</p>;
 
