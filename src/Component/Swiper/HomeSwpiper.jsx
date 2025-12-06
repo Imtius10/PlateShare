@@ -1,11 +1,10 @@
 import React from "react";
-import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "swiper/css/scrollbar";
 
 import one from "../../assets/photorealistic-kid-refugee-camp (1).jpg";
 import two from "../../assets/photorealistic-kid-refugee-camp.jpg";
@@ -32,14 +31,14 @@ const HomeSwiper = () => {
     ];
 
     return (
-        <div className="w-full">
+        <div className="w-full flex justify-center py-10 bg-[#fff8f0]">
             <Swiper
-                modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-                spaceBetween={0}
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={30}
                 slidesPerView={1}
                 loop={true}
                 autoplay={{
-                    delay: 3000,
+                    delay: 3500,
                     disableOnInteraction: false,
                 }}
                 pagination={{ clickable: true }}
@@ -47,16 +46,19 @@ const HomeSwiper = () => {
             >
                 {slides.map((s, index) => (
                     <SwiperSlide key={index}>
-                        <div className="relative w-full h-[450px] md:h-[550px] lg:h-[650px]">
-                            <img
-                                src={s.img}
-                                className="w-full h-full object-cover"
-                                alt=""
-                            />
-
-                            {/* Quote Overlay */}
-                            <div className="absolute bottom-6 left-6 bg-black/50 text-white p-4 rounded-lg text-lg md:text-xl max-w-[85%]">
-                                {s.quote}
+                        <div className="relative w-full flex justify-center">
+                            <div className="relative w-full max-w-4xl h-[350px] md:h-[450px] lg:h-[500px] rounded-2xl overflow-hidden shadow-xl border-2 border-[#ba692b]">
+                                <img
+                                    src={s.img}
+                                    alt={`slide-${index}`}
+                                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                />
+                                {/* Gradient Overlay for Quote */}
+                                <div className="absolute bottom-0 w-full bg-gradient-to-t from-[#ba692b]/80 via-transparent to-transparent p-6">
+                                    <p className="text-center text-sm md:text-lg lg:text-xl font-semibold text-white drop-shadow-lg">
+                                        {s.quote}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </SwiperSlide>

@@ -6,10 +6,11 @@ import { FcGoogle } from "react-icons/fc";
 import { AuthContext } from "../AuthProvider/AuthProvider";
 
 const Register = () => {
-    const [showPassword, setShowPassword] = useState(false);
     const { createUser, setUser, signInWithGoogle } = useContext(AuthContext);
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
@@ -17,7 +18,8 @@ const Register = () => {
         const email = form.email.value;
         const password = form.password.value;
         const photo_url = form.photo_url.value;
-          
+
+        // Password validation
         if (password.length < 6) {
             setError("Password must be at least 6 characters long");
             return;
@@ -34,18 +36,14 @@ const Register = () => {
         setError("");
 
         createUser(email, password)
-            .then(result => {
-                console.log(result.user)
-                setUser(result.user)
-                toast.success("Register Successfully")
-                navigate('/')
+            .then((result) => {
+                setUser(result.user);
+                toast.success("Registered Successfully!");
+                navigate("/");
             })
-            .catch(err => {
-            setError(err.message)
-            })
-        
-        
-    }
+            .catch((err) => setError(err.message));
+    };
+
     const handleGoogleSignIn = () => {
         signInWithGoogle()
             .then((res) => {
@@ -57,24 +55,24 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-linear-to-r from-orange-200 via-orange-50 to-orange-100 px-5">
-
+        <div className="min-h-screen flex items-center justify-center bg-[#f7efe7] px-4">
             <Toaster position="top-right" />
 
-            <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-[#fab158]">
-                <h1 className="text-3xl font-bold text-center mb-6">
+            <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-[#ba692b]">
+                <h1 className="text-3xl font-bold text-center mb-6 text-[#ba692b]">
                     Create an Account
                 </h1>
-                {error && <p className="mb-4 text-red-500 text-center text-sm">{error}</p>}
-                <form onSubmit={handleSubmit} className="space-y-4 text-black">
 
+                {error && <p className="mb-4 text-red-500 text-center text-sm">{error}</p>}
+
+                <form onSubmit={handleSubmit} className="space-y-4 text-black">
                     {/* Name */}
                     <input
                         type="text"
                         name="name"
-                        placeholder="Your Full Name"
+                        placeholder="Full Name"
                         required
-                        className="w-full border border-[#fab158] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
                     />
 
                     {/* Photo URL */}
@@ -83,7 +81,7 @@ const Register = () => {
                         name="photo_url"
                         placeholder="Photo URL"
                         required
-                        className="w-full border border-[#fab158] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
                     />
 
                     {/* Email */}
@@ -92,7 +90,7 @@ const Register = () => {
                         name="email"
                         placeholder="Email Address"
                         required
-                        className="w-full border border-[#fab158] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
                     />
 
                     {/* Password */}
@@ -102,41 +100,39 @@ const Register = () => {
                             name="password"
                             placeholder="Password"
                             required
-                            className="w-full border border-[#fab158] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+                            className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
                         />
-
-                        {/* Eye Toggle */}
                         <span
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 cursor-pointer text-[#fab158] font-semibold"
+                            className="absolute right-3 top-3 cursor-pointer text-[#ba692b]"
                         >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            {showPassword ? <FaEye /> : <FaEyeSlash />}
                         </span>
                     </div>
 
                     {/* Register Button */}
                     <button
                         type="submit"
-                        className="btn btn-primary w-full text-white py-3 rounded-lg font-semibold transition"
+                        className="w-full bg-[#ba692b] text-white py-3 rounded-lg font-semibold hover:bg-[#9e5630] transition"
                     >
                         Register
                     </button>
                 </form>
 
-                {/* Google Login */}
+                {/* Google Sign In */}
                 <div className="flex items-center justify-center mt-4 gap-2">
-                    <button 
+                    <button
                         onClick={handleGoogleSignIn}
                         className="flex items-center gap-2 border border-gray-300 p-2 rounded-lg hover:bg-gray-100 w-full justify-center text-black"
                     >
-                        <FcGoogle size={24} /> <p>Continue with Google</p>
+                        <FcGoogle size={24} /> Continue with Google
                     </button>
                 </div>
 
                 {/* Redirect to Login */}
-                <p className="text-center mt-4 text-[#fab158] text-sm">
+                <p className="text-center mt-4 text-[#ba692b] text-sm">
                     Already have an account?{" "}
-                    <Link to="/login" className="text-[#fab158] font-semibold hover:underline">
+                    <Link to="/login" className="font-semibold hover:underline">
                         Login
                     </Link>
                 </p>

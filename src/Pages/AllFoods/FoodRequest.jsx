@@ -1,253 +1,86 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
-import toast, { Toaster } from "react-hot-toast";
 
-const FoodRequest = ({ food }) => {
+const MyRequest = () => {
     const { user } = useContext(AuthContext);
-    const { register, handleSubmit, reset } = useForm();
-    const [modalOpen, setModalOpen] = useState(false);
     const [requests, setRequests] = useState([]);
-    const [loadingRequests, setLoadingRequests] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-    // Fetch requests for this food (only food owner)
     useEffect(() => {
-        if (!food || !user) return; // wait until food & user exist
+        if (!user?.email) return;
 
-        if (user?.email === food?.donator_email) {
-            setLoadingRequests(true);
-            fetch(`http://localhost:3000/requests?foodId=${food._id}`)
-                .then((res) => res.json())
-                .then((data) => setRequests(data))
-                .catch((err) => console.log(err))
-                .finally(() => setLoadingRequests(false));
-        }
-    }, [food, user]);
+        fetch(`http://localhost:3000/my-requests?userEmail=${user.email}`)
+            .then((res) => res.json())
+            .then((data) => setRequests(data))
+            .catch((err) => console.log(err))
+            .finally(() => setLoading(false));
+    }, [user]);
 
-    const onRequestSubmit = async (data) => {
-        if (!user) {
-            toast.error("You must be logged in!");
-            return;
-        }
-        if (!food?._id) {
-            toast.error("Food data not loaded yet!");
-            return;
-        }
+    if (!user)
+        return (
+            <p className="text-center mt-10 text-[#ba692b] font-semibold">
+                Please login to view your requests.
+            </p>
+        );
 
-        const requestData = {
-            foodId: food._id,
-            foodName: food.food_name,
-            requester_name: user.displayName,
-            requester_email: user.email,
-            requester_photo: user.photoURL || "",
-            location: data.location,
-            reason: data.reason,
-            contact_no: data.contactNo,
-            status: "pending",
-            createdAt: new Date(),
-        };
-
-        try {
-            const res = await fetch("http://localhost:3000/food-requests", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestData),
-            });
-            const result = await res.json();
-
-            if (result.insertedId) {
-                toast.success("Food request submitted!");
-                reset();
-                setModalOpen(false);
-            } else {
-                toast.error("Failed to submit request.");
-            }
-        } catch (err) {
-            toast.error("Something went wrong!");
-            console.log(err);
-        }
-    };
-
-    const handleRequestAction = async (requestId, action) => {
-        try {
-            // Update request status
-            await fetch(`http://localhost:3000/food-requests/${requestId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    status: action === "accept" ? "accepted" : "rejected",
-                }),
-            });
-
-            // If accepted, update food status to donated
-            if (action === "accept") {
-                await fetch(`http://localhost:3000/foods/${food._id}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ food_status: "donated" }),
-                });
-            }
-
-            // Update local requests state
-            setRequests((prev) =>
-                prev.map((r) =>
-                    r._id === requestId
-                        ? { ...r, status: action === "accept" ? "accepted" : "rejected" }
-                        : r
-                )
-            );
-
-            toast.success(`Request ${action === "accept" ? "Accepted" : "Rejected"}`);
-        } catch (err) {
-            toast.error("Action failed");
-            console.log(err);
-        }
-    };
-
-    if (!food) return <p>Loading food details...</p>; // wait until food is loaded
+    if (loading)
+        return (
+            <p className="text-center mt-10 text-[#ba692b] font-semibold">
+                Loading your requests...
+            </p>
+        );
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
-            <Toaster />
-            <div className="bg-white shadow-lg p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-2">{food?.food_name}</h2>
-                <p><b>Quantity:</b> {food?.food_quantity}</p>
-                <p><b>Pickup Location:</b> {food?.pickup_location}</p>
-                <p><b>Expire Date:</b> {new Date(food?.expire_date).toLocaleDateString()}</p>
-                <p><b>Status:</b> {food?.food_status}</p>
+        <div className="max-w-5xl mx-auto p-6 mt-10 bg-white shadow-xl rounded-2xl">
+            <h2 className="text-3xl font-bold text-[#ba692b] mb-6 text-center">
+                My Requests
+            </h2>
 
-                {/* Request Food Button */}
-                {user && user?.email !== food?.donator_email && (
-                    <button
-                        className="btn btn-primary mt-4"
-                        onClick={() => setModalOpen(true)}
-                    >
-                        Request Food
-                    </button>
-                )}
-            </div>
-
-            {/* Request Modal */}
-            {modalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-96 relative">
-                        <button
-                            className="absolute top-2 right-2 btn btn-sm btn-circle"
-                            onClick={() => setModalOpen(false)}
-                        >
-                            ✕
-                        </button>
-                        <h3 className="text-xl font-semibold mb-4">Request Food</h3>
-
-                        <form
-                            onSubmit={handleSubmit(onRequestSubmit)}
-                            className="space-y-3"
-                        >
-                            <div>
-                                <label className="font-medium">Location</label>
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("location", { required: true })}
-                                />
-                            </div>
-                            <div>
-                                <label className="font-medium">Why Need Food</label>
-                                <textarea
-                                    className="textarea textarea-bordered w-full"
-                                    {...register("reason", { required: true })}
-                                ></textarea>
-                            </div>
-                            <div>
-                                <label className="font-medium">Contact No.</label>
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("contactNo", { required: true })}
-                                />
-                            </div>
-                            <button type="submit" className="btn btn-success w-full">
-                                Submit Request
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* Food Requests Table (Only for food owner) */}
-            {user?.email === food?.donator_email && (
-                <div className="mt-6">
-                    <h3 className="text-xl font-semibold mb-2">Food Requests</h3>
-                    {loadingRequests ? (
-                        <p>Loading requests...</p>
-                    ) : requests.length === 0 ? (
-                        <p>No requests yet.</p>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="table table-zebra w-full">
-                                <thead>
-                                    <tr>
-                                        <th>Requester</th>
-                                        <th>Location</th>
-                                        <th>Reason</th>
-                                        <th>Contact</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {requests.map((req) => (
-                                        <tr key={req._id}>
-                                            <td>
-                                                <div className="flex items-center space-x-2">
-                                                    {req.requester_photo && (
-                                                        <img
-                                                            src={req.requester_photo}
-                                                            alt=""
-                                                            className="w-8 h-8 rounded-full"
-                                                        />
-                                                    )}
-                                                    <span>{req.requester_name}</span>
-                                                </div>
-                                            </td>
-                                            <td>{req.location}</td>
-                                            <td>{req.reason}</td>
-                                            <td>{req.contact_no}</td>
-                                            <td>{req.status}</td>
-                                            <td>
-                                                {req.status === "pending" ? (
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            className="btn btn-sm btn-success"
-                                                            onClick={() =>
-                                                                handleRequestAction(req._id, "accept")
-                                                            }
-                                                        >
-                                                            Accept
-                                                        </button>
-                                                        <button
-                                                            className="btn btn-sm btn-error"
-                                                            onClick={() =>
-                                                                handleRequestAction(req._id, "reject")
-                                                            }
-                                                        >
-                                                            Reject
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <span className="font-medium">{req.status}</span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+            {requests.length === 0 ? (
+                <p className="text-center text-gray-600">
+                    You have not requested any food yet.
+                </p>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="table w-full border border-gray-200 rounded-xl">
+                        <thead className="bg-[#ffe6d6] text-[#ba692b] font-semibold">
+                            <tr>
+                                <th>Food Name</th>
+                                <th>Owner Email</th>
+                                <th>Location</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {requests.map((r) => (
+                                <tr
+                                    key={r._id}
+                                    className="hover:bg-[#fff2e6] transition-colors duration-200"
+                                >
+                                    <td className="font-medium">{r.foodName}</td>
+                                    <td>{r.owner_email}</td>
+                                    <td>{r.location}</td>
+                                    <td>{r.reason}</td>
+                                    <td
+                                        className={
+                                            r.status === "pending"
+                                                ? "text-yellow-600 font-semibold"
+                                                : r.status === "accepted"
+                                                    ? "text-green-600 font-semibold"
+                                                    : "text-red-600 font-semibold"
+                                        }
+                                    >
+                                        {r.status}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
     );
 };
 
-export default FoodRequest;
+export default MyRequest;

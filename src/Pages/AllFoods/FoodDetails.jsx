@@ -1,110 +1,162 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
-import toast from "react-hot-toast";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
-import RequestFood from "./MyRequest"; // import the request food component
+import FoodRequestsTable from "./FoodRequestsTable";
+import toast, { Toaster } from "react-hot-toast";
 
 const FoodDetails = () => {
     const { id } = useParams();
     const { user } = useContext(AuthContext);
-    const navigate = useNavigate();
-
     const [food, setFood] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [requestData, setRequestData] = useState({
+        location: "",
+        reason: "",
+        contact_no: "",
+    });
 
-    // Redirect if not logged in
     useEffect(() => {
-        if (!user) {
-            toast.error("You need to login first!");
-            navigate("/login");
-        }
-    }, [user, navigate]);
-
-    // Fetch food details
-    useEffect(() => {
-        const fetchFood = async () => {
-            try {
-                const res = await fetch(`http://localhost:3000/foods/${id}`);
-                if (!res.ok) throw new Error("Food not found");
-                const data = await res.json();
-                setFood(data);
-            } catch (err) {
-                console.error(err);
+        fetch(`http://localhost:3000/foods/${id}`)
+            .then(res => res.json())
+            .then(data => setFood(data))
+            .catch(err => {
+                console.log(err);
                 toast.error("Failed to fetch food details");
-            }
-        };
-        fetchFood();
+            })
+            .finally(() => setLoading(false));
     }, [id]);
 
-    if (!food) {
-        return (
-            <div className="flex justify-center mt-10 text-xl font-semibold">
-                Loading...
-            </div>
-        );
-    }
+    const handleChange = (e) => {
+        setRequestData({ ...requestData, [e.target.name]: e.target.value });
+    };
+
+    const handleRequestSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            toast.error("You must be logged in to request food!");
+            return;
+        }
+
+        const payload = {
+            foodId: food._id,
+            foodName: food.food_name,
+            userEmail: user.email,
+            requester_name: user.displayName,
+            requester_photo: user.photoURL,
+            location: requestData.location,
+            reason: requestData.reason,
+            contact_no: requestData.contact_no,
+            status: "pending",
+            createdAt: new Date(),
+        };
+
+        try {
+            const res = await fetch("http://localhost:3000/requests", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (data.insertedId) {
+                toast.success("Food request submitted!");
+                setShowModal(false);
+                setRequestData({ location: "", reason: "", contact_no: "" });
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to submit request");
+        }
+    };
+
+    if (loading) return <p className="text-center mt-10">Loading food details...</p>;
+    if (!food) return <p className="text-center mt-10">Food not found</p>;
+
+    const isOwner = user?.email === food.donator_email;
 
     return (
-        <div className="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-xl">
-            {/* Food Image */}
-            <img
-                src={food.food_image}
-                alt={food.food_name}
-                className="w-full h-72 object-cover rounded-lg"
-            />
-
-            <h2 className="text-3xl font-bold mt-4">{food.food_name}</h2>
-
-            {/* Donator */}
-            <div className="flex items-center gap-3 mt-4">
+        <div className="min-h-screen bg-[#f7efe7] py-10">
+            <Toaster />
+            <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl">
                 <img
-                    src={food.donator_image}
-                    alt="donor"
-                    className="w-14 h-14 rounded-full"
+                    src={food.food_image}
+                    alt={food.food_name}
+                    className="w-full h-72 object-cover rounded-lg"
                 />
-                <div>
-                    <p className="text-lg font-semibold">{food.donator_name}</p>
-                    <p className="text-gray-700">{food.donator_email}</p>
-                </div>
-            </div>
+                <h2 className="text-3xl font-bold mt-4 text-[#ba692b]">{food.food_name}</h2>
+                <p><b>Quantity:</b> {food.food_quantity}</p>
+                <p><b>Pickup Location:</b> {food.pickup_location}</p>
+                <p><b>Expire Date:</b> {new Date(food.expire_date).toLocaleDateString()}</p>
+                <p><b>Status:</b> {food.status || "pending"}</p>
+                <p className="mt-3 bg-gray-100 p-3 rounded-lg">{food.notes || "No additional notes."}</p>
 
-            {/* Food Info */}
-            <div className="mt-5 space-y-2 text-gray-700">
-                <p>
-                    <b>Quantity:</b> {food.food_quantity}
-                </p>
-                <p>
-                    <b>Pickup Location:</b> {food.pickup_location}
-                </p>
-                <p>
-                    <b>Expire Date:</b> {new Date(food.expire_date).toLocaleDateString()}
-                </p>
-                <p>
-                    <b>Status:</b>{" "}
-                    <span
-                        className={`font-semibold ${food.food_status === "Available" ? "text-green-600" : "text-red-600"
-                            }`}
+                {/* Request Button (Not owner) */}
+                {!isOwner && (
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="mt-5 w-full bg-[#ba692b] text-white py-3 rounded-lg font-semibold hover:bg-[#9e5630] transition"
                     >
-                        {food.food_status}
-                    </span>
-                </p>
-            </div>
+                        Request Food
+                    </button>
+                )}
 
-            {/* Notes */}
-            <div className="mt-5">
-                <h3 className="text-lg font-semibold">Additional Notes:</h3>
-                <p className="text-gray-700 bg-gray-100 p-3 rounded-lg">
-                    {food.notes || "No notes provided."}
-                </p>
-            </div>
-
-            {/* Request Food Component */}
-            {user?.email !== food.donator_email && food.food_status === "Available" && (
-                <div className="mt-6">
-                    <RequestFood
+                {/* Food Requests Table (Owner only) */}
+                {isOwner && (
+                    <FoodRequestsTable
                         foodId={food._id}
-                        foodName={food.food_name}
-                        onRequestSubmitted={() => toast.success("Request submitted!")}
+                        ownerEmail={food.donator_email}
+                        currentUserEmail={user?.email}
                     />
+                )}
+            </div>
+
+            {/* Request Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute top-3 right-3 text-[#ba692b] font-bold text-xl"
+                        >
+                            ×
+                        </button>
+                        <h2 className="text-2xl font-bold mb-4 text-[#ba692b]">Request Food</h2>
+                        <form className="space-y-3" onSubmit={handleRequestSubmit}>
+                            <input
+                                type="text"
+                                name="location"
+                                value={requestData.location}
+                                onChange={handleChange}
+                                placeholder="Your Location"
+                                required
+                                className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
+                            />
+                            <textarea
+                                name="reason"
+                                value={requestData.reason}
+                                onChange={handleChange}
+                                placeholder="Why do you need this food?"
+                                required
+                                rows={3}
+                                className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
+                            />
+                            <input
+                                type="text"
+                                name="contact_no"
+                                value={requestData.contact_no}
+                                onChange={handleChange}
+                                placeholder="Contact Number"
+                                required
+                                className="w-full border border-[#ba692b] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#ba692b]"
+                            />
+                            <button
+                                type="submit"
+                                className="w-full bg-[#ba692b] text-white py-3 rounded-lg font-semibold hover:bg-[#9e5630] transition"
+                            >
+                                Submit Request
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
         </div>

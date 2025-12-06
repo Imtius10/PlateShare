@@ -1,116 +1,59 @@
-import React, { useState, useContext } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
-import toast, { Toaster } from "react-hot-toast";
 
-const MyRequest = ({ foodId, foodName, onRequestSubmitted }) => {
+const MyRequest = () => {
     const { user } = useContext(AuthContext);
-    const { register, handleSubmit, reset } = useForm();
-    const [modalOpen, setModalOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const onSubmit = async (data) => {
-        if (!user) {
-            toast.error("You must be logged in to request food!");
-            return;
-        }
+    useEffect(() => {
+        if (!user) return;
 
-        setLoading(true);
+        fetch(`http://localhost:3000/my-requests?userEmail=${user.email}`)
+            .then(res => res.json())
+            .then(data => setRequests(data))
+            .catch(err => console.log(err))
+            .finally(() => setLoading(false));
+    }, [user]);
 
-        const requestData = {
-            foodId,
-            foodName,
-            requester_name: user.displayName,
-            requester_email: user.email,
-            requester_photo: user.photoURL || "",
-            location: data.location,
-            reason: data.reason,
-            contact_no: data.contactNo,
-            status: "pending",
-            createdAt: new Date(),
-        };
+    if (!user) return <p className="text-center mt-10 text-lg font-semibold text-[#ba692b]">Please login to view your requests.</p>;
+    if (loading) return <p className="text-center mt-10 text-gray-600">Loading your requests...</p>;
 
-        try {
-            const res = await fetch("http://localhost:3000/food-requests", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestData),
-            });
-            const result = await res.json();
-
-            if (result.insertedId) {
-                toast.success("Food request submitted!");
-                reset();
-                setModalOpen(false);
-                if (onRequestSubmitted) onRequestSubmitted(); // callback for parent
-            } else {
-                toast.error("Failed to submit request.");
-            }
-        } catch (err) {
-            toast.error("Something went wrong!");
-            console.log(err);
-        }
-
-        setLoading(false);
+    const statusColor = (status) => {
+        if (status === "pending") return "text-yellow-600";
+        if (status === "accepted") return "text-green-600";
+        if (status === "rejected") return "text-red-600";
+        return "text-gray-600";
     };
 
     return (
-        <>
-            <Toaster />
-            <button
-                className="btn btn-primary"
-                onClick={() => setModalOpen(true)}
-            >
-                Request Food
-            </button>
-
-            {modalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-96 relative">
-                        <button
-                            className="absolute top-2 right-2 btn btn-sm btn-circle"
-                            onClick={() => setModalOpen(false)}
-                        >
-                            ✕
-                        </button>
-                        <h3 className="text-xl font-semibold mb-4">Request Food</h3>
-
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                            <div>
-                                <label className="font-medium">Location</label>
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("location", { required: true })}
-                                />
-                            </div>
-                            <div>
-                                <label className="font-medium">Why Need Food</label>
-                                <textarea
-                                    className="textarea textarea-bordered w-full"
-                                    {...register("reason", { required: true })}
-                                ></textarea>
-                            </div>
-                            <div>
-                                <label className="font-medium">Contact No.</label>
-                                <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    {...register("contactNo", { required: true })}
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className={`btn btn-success w-full ${loading ? "loading" : ""}`}
-                                disabled={loading}
-                            >
-                                {loading ? "Submitting..." : "Submit Request"}
-                            </button>
-                        </form>
-                    </div>
+        <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-2xl">
+            <h2 className="text-2xl font-bold mb-6 text-[#ba692b] text-center">My Food Requests</h2>
+            {requests.length === 0 ? (
+                <p className="text-center text-gray-600 mt-10">You haven't requested any food yet.</p>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="table w-full border border-gray-200">
+                        <thead className="bg-[#f3e4da]">
+                            <tr>
+                                <th className="text-left">Food Name</th>
+                                <th className="text-left">Status</th>
+                                <th className="text-left">Requested On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {requests.map(r => (
+                                <tr key={r._id} className="hover:bg-gray-50 transition">
+                                    <td>{r.foodName}</td>
+                                    <td className={`font-semibold ${statusColor(r.status)}`}>{r.status}</td>
+                                    <td>{new Date(r.createdAt).toLocaleString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
-        </>
+        </div>
     );
 };
 

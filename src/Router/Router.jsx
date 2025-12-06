@@ -9,6 +9,8 @@ import ManageMyFoods from "../Pages/AllFoods/ManageMyFoods";
 import AddFoods from "../Pages/AllFoods/AddFoods";
 import FoodRequest from "../Pages/AllFoods/FoodRequest";
 import MyRequest from "../Pages/AllFoods/MyRequest";
+import FoodOwnerRequestPanel from "../Pages/AllFoods/FoodOwnerRequestPanel";
+import OwnerRequests from "../Pages/AllFoods/OwnerRequests";
 
 
 
@@ -45,13 +47,23 @@ const router = createBrowserRouter([
                 element:<AddFoods></AddFoods>
             },
             {
-                path: '/food-request',
-                element:<FoodRequest></FoodRequest>
+                path: "/food-request/:ownerEmail",
+                element: <FoodRequest />
             },
+
             {
                 path: '/myrequest',
                 element:<MyRequest></MyRequest>
+            },
+            {
+                path: "/food-request",
+                element: <FoodOwnerRequestPanel />
+            },
+            {
+                path:"/owner-requests",
+                element:< OwnerRequests />
             }
+            
         ]
     },
     

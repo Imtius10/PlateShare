@@ -10,6 +10,7 @@
   default: true;
   --color-primary: #632EE3;
   --color-secondary: teal;
+  --color-plateShare:#ba692b;
 }
 
 .btn-primary{
