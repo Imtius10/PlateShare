@@ -24,13 +24,13 @@ const Navbar = () => {
                 Home
             </NavLink>
 
-            <NavLink
+            <NavLink 
                 className={({ isActive }) =>
                     isActive
                         ? "underline text-[#75d705] font-semibold text-lg"
                         : "font-semibold text-lg"
                 }
-                to="/available-foods"
+                to="/availabelfood"
             >
                 Available Foods
             </NavLink>
@@ -80,6 +80,9 @@ const Navbar = () => {
                                     <>
                                         <NavLink to="/profile">
                                             <button className="btn btn-success w-full">Profile</button>
+                                        </NavLink>
+                                        <NavLink to="/managefood">
+                                            <button className="btn btn-success w-full">Manage My Food</button>
                                         </NavLink>
 
                                         <button
@@ -137,7 +140,9 @@ const Navbar = () => {
                             <li>
                                 <NavLink to="/profile">Profile</NavLink>
                             </li>
-
+                            <NavLink to="/managefood">
+                                <button className="btn btn-success w-full">Manage My Food</button>
+                            </NavLink>
                             <li>
                                 <button
                                     onClick={handleLogout}
