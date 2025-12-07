@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import HomeSwiper from '../Swiper/HomeSwpiper';
 import StaticHome from '../StaticHome/StaticHome';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import toast from 'react-hot-toast';
 import { Commet } from 'react-loading-indicators';
 
@@ -96,7 +96,19 @@ const Home = () => {
                         </div>
                     ))}
 
+
                 </div>
+                <div className="w-full flex justify-center mt-6">
+                    <NavLink to={'/availabelfood'}>
+                        <button
+                            className="px-8 py-3 rounded-2xl font-semibold text-white bg-orange-400 
+        hover:bg-orange-500 active:scale-95 transition-all duration-300 shadow-lg"
+                        >
+                            See Available Foods
+                        </button>
+                   </NavLink>
+                </div>
+
             </div>
 
 
