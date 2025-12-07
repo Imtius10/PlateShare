@@ -11,7 +11,7 @@ const AvailableFoods = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch("http://localhost:3000/foods?status=Available")
+        fetch("https://plate-share-server-nu.vercel.app/foods?status=Available")
             .then((res) => res.json())
             .then((data) => setFoods(data))
             .catch((err) => console.log(err))
@@ -28,7 +28,7 @@ const AvailableFoods = () => {
 
     const handleViewDetails = (id) => {
         if (!user) {
-            toast.error("You must be logged in to request food!");
+            toast.error("You must be logged in to see food details");
             navigate("/login");
             return;
         }

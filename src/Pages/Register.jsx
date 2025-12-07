@@ -13,7 +13,7 @@ const Register = () => {
 
     // Save user in your database
     const saveUserToDB = (user) => {
-        fetch("http://localhost:3000/user", {
+        fetch("https://plate-share-server-nu.vercel.app/user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user),

@@ -14,7 +14,7 @@ const MyRequest = () => {
 
         if (!user) return;
 
-        fetch(`http://localhost:3000/my-requests?userEmail=${user.email}`)
+        fetch(`https://plate-share-server-nu.vercel.app/my-requests?userEmail=${user.email}`)
             .then(res => res.json())
             .then(data => setRequests(data))
             .catch(err => console.log(err))

@@ -13,7 +13,7 @@ const Home = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch("http://localhost:3000/foods?status=Available")
+        fetch("https://plate-share-server-nu.vercel.app/foods?status=Available")
             .then(res => res.json())
             .then(data => setFood(data))
             .catch((err) => console.log(err))
@@ -37,12 +37,17 @@ const Home = () => {
         );
     }
 
+    const sortedFoods = [...foods].sort((a, b) => {
+        const getNum = (str) => parseInt(str.match(/\d+/)?.[0] || 0);
+        return getNum(b.food_quantity) - getNum(a.food_quantity);
+    });
+
     return (
         <div>
             <HomeSwiper />
             <div className='className="max-w-7xl mx-auto p-6'>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {foods.slice(0, 6).map((food) => (
+                    {sortedFoods.slice(0, 6).map((food) => (
                         <div
                             key={food._id}
                             className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
@@ -90,6 +95,7 @@ const Home = () => {
                             </div>
                         </div>
                     ))}
+
                 </div>
             </div>
 

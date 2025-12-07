@@ -8,7 +8,7 @@ const FoodRequestsTable = ({ foodId, ownerEmail, currentUserEmail }) => {
     useEffect(() => {
         if (!isOwner) return;
 
-        fetch(`http://localhost:3000/requests/food/${foodId}`)
+        fetch(`https://plate-share-server-nu.vercel.app/requests/food/${foodId}`)
             .then(res => res.json())
             .then(data => setRequests(data))
             .catch(err => console.error(err));
@@ -17,14 +17,14 @@ const FoodRequestsTable = ({ foodId, ownerEmail, currentUserEmail }) => {
     const handleAccept = async (reqId) => {
         try {
             // Update request status
-            await fetch(`http://localhost:3000/requests/${reqId}`, {
+            await fetch(`https://plate-share-server-nu.vercel.app/requests/${reqId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: "accepted" }),
             });
 
             // Update food status
-            await fetch(`http://localhost:3000/foods/${foodId}`, {
+            await fetch(`https://plate-share-server-nu.vercel.app/foods/${foodId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: "donated" }),
@@ -41,7 +41,7 @@ const FoodRequestsTable = ({ foodId, ownerEmail, currentUserEmail }) => {
 
     const handleReject = async (reqId) => {
         try {
-            await fetch(`http://localhost:3000/requests/${reqId}`, {
+            await fetch(`https://plate-share-server-nu.vercel.app/requests/${reqId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: "rejected" }),

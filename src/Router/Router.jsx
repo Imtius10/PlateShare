@@ -13,6 +13,7 @@ import FoodOwnerRequestPanel from "../Pages/AllFoods/FoodOwnerRequestPanel";
 import OwnerRequests from "../Pages/AllFoods/OwnerRequests";
 import UpdateFood from "../Pages/AllFoods/UpdateFood";
 import PrivateRoutes from "../Private/PrivateRoutes";
+import ErrorPage from "../Pages/Error/ErrorPage";
 
 
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: <RootLayout></RootLayout>,
+        errorElement:<ErrorPage></ErrorPage>,
         children: [{
             index: true,
             element:<Home></Home>

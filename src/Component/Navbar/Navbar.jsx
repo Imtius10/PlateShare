@@ -2,15 +2,29 @@ import React, { useContext, useState } from "react";
 import { NavLink } from "react-router";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import { PiUserCircleCheckThin } from "react-icons/pi";
-import logo from '../../assets/plateshareLogo.png';
+
+import logo from "../../assets/plateshareLogo.png";
+import { Commet } from "react-loading-indicators";
 
 const Navbar = () => {
-    const { user, setUser, doSignOut } = useContext(AuthContext);
+    const { user, loading, doSignOut } = useContext(AuthContext);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const handleLogout = () => {
-        doSignOut().then(() => setUser(null));
+        doSignOut();
     };
+
+    // 🔥 LOADER WHILE AUTH IS CHECKING (refresh / initial load)
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen w-full bg-[#fff8f0]">
+                <Commet
+                    color={["#673a18", "#915221", "#ba692b", "#d48244"]}
+                    size={90}
+                />
+            </div>
+        );
+    }
 
     const links = (
         <>
@@ -55,7 +69,7 @@ const Navbar = () => {
         <div className="navbar bg-[#fff8f0] shadow-md px-4 py-2">
             {/* LEFT SIDE */}
             <div className="navbar-start flex items-center gap-2">
-                {/* MOBILE DROPDOWN */}
+                {/* MOBILE MENU */}
                 <div className="dropdown lg:hidden">
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
@@ -78,21 +92,9 @@ const Navbar = () => {
                             <li>
                                 {user ? (
                                     <>
-                                       
-                                        <li>
-                                            <NavLink to="/addfoods">
-                                                Add Food
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/owner-requests">
-                                                Requested Food
-                                            </NavLink>
-                                        </li>
+                                        <NavLink to="/addfoods">Add Food</NavLink>
+                                        <NavLink to="/owner-requests">Requested Food</NavLink>
 
-                                        <li> <NavLink to="/food-request/:ownerEmail">
-                                            Food req owner Email
-                                        </NavLink></li>
                                         <button
                                             onClick={handleLogout}
                                             className="btn bg-[#ba692b] text-white w-full hover:bg-[#d88a55]"
@@ -103,7 +105,9 @@ const Navbar = () => {
                                 ) : (
                                     <>
                                         <NavLink to="/login">
-                                            <button className="btn bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">Login</button>
+                                            <button className="btn bg-[#ba692b] text-white w-full hover:bg-[#d88a55]">
+                                                Login
+                                            </button>
                                         </NavLink>
 
                                         <NavLink to="/register">
@@ -146,27 +150,22 @@ const Navbar = () => {
                             tabIndex={0}
                             className="menu menu-sm dropdown-content mt-3 z-20 p-2 shadow-lg bg-[#fff8f0] rounded-box w-52 text-center"
                         >
-                            <li className="font-bold text-center text-[#ba692b]">{user.displayName || "User"}</li>
+                            <li className="font-bold text-center text-[#ba692b]">
+                                {user.displayName || "User"}
+                            </li>
+
                             <li>
-                                <NavLink to="/managefood">
-                                    Manage My Food
-                                </NavLink>  
-                         </li>
-                            
+                                <NavLink to="/managefood">Manage My Food</NavLink>
+                            </li>
+
                             <li>
-                                <NavLink to="/addfoods">
-                                    Add Food
-                                </NavLink>
-                           </li>
+                                <NavLink to="/addfoods">Add Food</NavLink>
+                            </li>
+
                             <li>
-                                <NavLink to="/owner-requests">
-                                    Requested Food
-                                </NavLink>
-                           </li>
-                          
-                            <li> <NavLink to="/food-request/:ownerEmail">
-                                Food req owner Email
-                            </NavLink></li>
+                                <NavLink to="/owner-requests">Requested Food</NavLink>
+                            </li>
+
                             <li>
                                 <button
                                     onClick={handleLogout}
@@ -180,11 +179,15 @@ const Navbar = () => {
                 ) : (
                     <>
                         <NavLink to="/login">
-                            <button className="btn bg-[#ba692b] text-white rounded-3xl hover:bg-[#d88a55]">Login</button>
+                            <button className="btn bg-[#ba692b] text-white rounded-3xl hover:bg-[#d88a55]">
+                                Login
+                            </button>
                         </NavLink>
 
                         <NavLink to="/register">
-                            <button className="btn bg-[#ba692b] text-white rounded-3xl hover:bg-[#d88a55]">Register</button>
+                            <button className="btn bg-[#ba692b] text-white rounded-3xl hover:bg-[#d88a55]">
+                                Register
+                            </button>
                         </NavLink>
                     </>
                 )}

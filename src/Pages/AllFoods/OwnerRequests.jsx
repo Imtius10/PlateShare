@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
+import { Commet } from "react-loading-indicators";
 
 const OwnerRequests = () => {
     const { user } = useContext(AuthContext);
@@ -11,12 +12,12 @@ const OwnerRequests = () => {
         if (!user?.email) return;
 
         // Fetch requests for foods that belong to this owner
-        fetch(`http://localhost:3000/foods?donator_email=${user.email}`)
+        fetch(`https://plate-share-server-nu.vercel.app/foods?donator_email=${user.email}`)
             .then(res => res.json())
             .then(async (foods) => {
                 const allRequests = [];
                 for (const food of foods) {
-                    const res = await fetch(`http://localhost:3000/requests/food/${food._id}`);
+                    const res = await fetch(`https://plate-share-server-nu.vercel.app/requests/food/${food._id}`);
                     const data = await res.json();
                     allRequests.push(...data.map(r => ({ ...r, foodName: food.food_name })));
                 }
@@ -28,7 +29,7 @@ const OwnerRequests = () => {
 
     const handleStatusChange = async (id, status) => {
         try {
-            const res = await fetch(`http://localhost:3000/requests/${id}`, {
+            const res = await fetch(`https://plate-share-server-nu.vercel.app/requests/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status }),
@@ -47,7 +48,9 @@ const OwnerRequests = () => {
     };
 
     if (!user) return <p className="text-center mt-10 text-[#ba692b] font-semibold">Please login to see requests.</p>;
-    if (loading) return <p className="text-center mt-10 text-[#ba692b] font-semibold">Loading requests...</p>;
+    if (loading) {
+        return <div className='flex justify-center items-center mx-auto min-h-full min-w-full'><Commet color={["#673a18", "#915221", "#ba692b", "#d48244"]} /></div>
+    }
 
     return (
         <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
@@ -76,7 +79,7 @@ const OwnerRequests = () => {
                                 <tr key={req._id}>
                                     <td>{req.foodName}</td>
                                     <td>{req.requester_name}</td>
-                                    <td>{req.requester_email}</td>
+                                    <td>{req.userEmail}</td>
                                     <td>{req.location}</td>
                                     <td>{req.contact_no}</td>
                                     <td>{req.reason}</td>

@@ -19,7 +19,7 @@ const FoodDetails = () => {
 
     // Fetch food details
     useEffect(() => {
-        fetch(`http://localhost:3000/foods/${id}`)
+        fetch(`https://plate-share-server-nu.vercel.app/foods/${id}`)
             .then(res => res.json())
             .then(data => setFood(data))
             .catch(err => {
@@ -54,7 +54,7 @@ const FoodDetails = () => {
         };
 
         try {
-            const res = await fetch("http://localhost:3000/food-requests", {
+            const res = await fetch("https://plate-share-server-nu.vercel.app/food-requests", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

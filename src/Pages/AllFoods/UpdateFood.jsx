@@ -17,7 +17,7 @@ const UpdateFood = () => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:3000/foods/${id}`)
+        fetch(`https://plate-share-server-nu.vercel.app/foods/${id}`)
             .then(res => res.json())
             .then(data => setFoodData(data))
             .catch(err => toast.error("Failed to load food data"));
@@ -30,7 +30,7 @@ const UpdateFood = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:3000/foods/${id}`, {
+            const res = await fetch(`https://plate-share-server-nu.vercel.app/foods/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(foodData),

@@ -12,7 +12,7 @@ const ManageMyFoods = () => {
     useEffect(() => {
         if (!user?.email) return;
 
-        fetch(`http://localhost:3000/foods?donator_email=${user.email}`)
+        fetch(`https://plate-share-server-nu.vercel.app/foods?donator_email=${user.email}`)
             .then(res => res.json())
             .then(data => setMyFoods(data))
             .catch(err => console.log(err));
@@ -31,7 +31,7 @@ const ManageMyFoods = () => {
 
         if (result.isConfirmed) {
             try {
-                const res = await fetch(`http://localhost:3000/foods/${id}`, {
+                const res = await fetch(`https://plate-share-server-nu.vercel.app/foods/${id}`, {
                     method: "DELETE",
                 });
                 const data = await res.json();
