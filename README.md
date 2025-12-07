@@ -1,16 +1,140 @@
-# React + Vite
+🍽️ PlateShare — Surplus Food Sharing Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A MERN + Firebase-based platform where people can donate extra food, request food, and help the community reduce waste.
 
-Currently, two official plugins are available:
+🚀 Live Demo & Repo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 Client: (add link)
+🔗 Server: (add link)
+🔗 Live Site: (add link)
 
-## React Compiler
+📦 Tech Stack
+Frontend
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React + React Router
 
-## Expanding the ESLint configuration
+Firebase Authentication
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Tailwind CSS
+
+DaisyUI
+
+Axios / Fetch
+
+AOS / Framer Motion
+
+Backend
+
+Node.js + Express
+
+MongoDB Atlas
+
+dotenv
+
+Nodemon
+
+📌 Main Features
+🔐 Authentication (Firebase)
+
+Email + Password login
+
+Register with validation
+
+Social login (Google)
+
+Dynamic navbar based on login status
+
+Redirect user after login
+
+Stores user info in MongoDB
+
+🏠 Home Page
+
+Hero/Banner section
+
+Animated sections (AOS/Framer Motion)
+
+Featured Foods (Top 6 by quantity)
+
+Cards with image, name, donor info
+
+“Show All” → Available Foods page
+
+Two static sections:
+
+⭐ How It Works
+
+🎯 Mission / Community Stats
+
+🍛 Add Food (Create – Private Route)
+
+Allows logged-in users to add food:
+✔ Food Name
+✔ Food Image (via imgbb upload)
+✔ Quantity
+✔ Pickup Location
+✔ Expire Date
+✔ Notes
+✔ Auto-filled Donor Info (Firebase user)
+✔ Default status = Available
+
+🥗 Available Foods (Read – Public)
+
+Shows only foods with food_status = "Available"
+
+2/3 column grid layout
+
+Shows complete basic details
+
+“View Details” → login required
+
+🍽️ Food Details (Read – Private)
+
+Full food information
+
+Donator details
+
+Status
+
+“Request Food” button
+
+Food Request Table (only for food owner)
+
+📝 Manage My Foods (Update & Delete – Private)
+
+Shows only the foods added by logged-in user
+
+Update Food (prefilled form)
+
+Delete Food (SweetAlert confirmation)
+
+Skeleton/Loader while fetching
+
+🥡 Food Request System (Challenge Feature)
+Request Food
+
+User fills a form:
+
+Pickup Location
+
+Reason
+
+Contact Number
+
+Saved in MongoDB as:
+
+status: "pending"
+
+Food Owner Controls
+
+For each request:
+
+✔ Accept → status = "accepted", food_status = "donated"
+
+✔ Reject → status = "rejected"
+
+❌ 404 Error Page
+
+Sad illustration
+
+“Back to Home” button
