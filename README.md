@@ -4,14 +4,12 @@ A MERN + Firebase-based platform where people can donate extra food, request foo
 
 🚀 Live Demo & Repo
 
-🔗 Client: (add link)
-🔗 Server: (add link)
-🔗 Live Site: (add link)
+🔗 Live Site: https://teal-puffpuff-841438.netlify.app/
 
 📦 Tech Stack
 Frontend
 
-React + React Router
+React + React Route
 
 Firebase Authentication
 
